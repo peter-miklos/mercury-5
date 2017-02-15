@@ -55,6 +55,7 @@ GEM
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     i18n (0.8.0)
+    jwt (1.5.6)
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -138,6 +139,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   devise (~> 4.2.0)
+  jwt (~> 1.5.6)
   listen (~> 3.0.5)
   mongoid (~> 6.1.0)
   puma (~> 3.0)
