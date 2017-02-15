@@ -1,4 +1,5 @@
 class ApiController < ApplicationController
+  before_filter :find_product, only: [:show, :update, :destroy]
 
   def index
     @products = Product.all
@@ -6,7 +7,6 @@ class ApiController < ApplicationController
   end
 
   def show
-    @product = Product.find(params[:product_id])
     render json: @product
   end
 
@@ -16,13 +16,11 @@ class ApiController < ApplicationController
   end
 
   def update
-    @product = Product.find(params[:product_id])
     @product.update_attributes!(product_params)
     render json: @product
   end
 
   def destroy
-    @product = Product.find(params[:product_id])
     if @product.delete
       render json: {"status": "Product has been removed."}
     else
@@ -33,6 +31,10 @@ class ApiController < ApplicationController
   private
   def product_params
     params.require(:api).permit(:category, :group, :name, :price, :origin)
+  end
+
+  def find_product
+    @product = Product.find(params[:product_id])
   end
 
 end
