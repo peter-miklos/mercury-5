@@ -11,18 +11,23 @@ class ApiController < ApplicationController
   end
 
   def create
-    @product = Product.new(product_params)
-    if @product.save
-      render json: @product
-    else
-      render head: {}, status: :bad_request
-    end
+    @product = Product.create!(product_params)
+    render json: @product
   end
 
   def update
+    @product = Product.find(params[:product_id])
+    @product.update_attributes!(product_params)
+    render json: @product
   end
 
   def destroy
+    @product = Product.find(params[:product_id])
+    if @product.delete
+      render json: {"status": "Product has been removed."}
+    else
+      render head: {}, status: :bad_request
+    end
   end
 
   private
