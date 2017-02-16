@@ -23,4 +23,10 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/' => 'authentication#authenticate_user'
+  get '*path', to: 'catch_all#index'
+  post '*path', to: 'catch_all#index'
+  put '*path', to: 'catch_all#index'
+  delete '*path', to: 'catch_all#index'
+
 end
