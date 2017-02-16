@@ -1,5 +1,6 @@
 class JsonWebToken
-  def self.encode(payload)
+  def self.encode(payload, expiration)
+    payload[:exp] = expiration
     JWT.encode(payload, Rails.application.secrets.secret_key_base)
   end
 
