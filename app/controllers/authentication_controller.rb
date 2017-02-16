@@ -21,7 +21,7 @@ class AuthenticationController < ApplicationController
     return nil unless user && user.id
     expiration = Time.now.to_i + (60 * 120)
     {
-      auth_token: JsonWebToken.encode({user_id: user.id}, expiration),
+      token: JsonWebToken.encode({user_id: user.id}, expiration),
       user: {id: user.id, email: user.email}
     }
   end
