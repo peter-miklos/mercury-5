@@ -23,4 +23,11 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/' => 'catch_all#index'
+  get '*path', to: 'catch_all#index'
+  post '*path', to: 'catch_all#index'
+  put '*path', to: 'catch_all#index'
+  delete '*path', to: 'catch_all#index'
+  patch '*path', to: 'catch_all#index'
+
 end

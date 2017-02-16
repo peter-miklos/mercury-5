@@ -25,7 +25,7 @@ class ApiController < ApplicationController
     if @product.delete
       render json: {"status": "Product has been removed."}
     else
-      render head: {}, status: :bad_request
+      render json: { error: 'Bad Request', status: 400 }, status: :bad_request
     end
   end
 
