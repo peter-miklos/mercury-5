@@ -8,6 +8,13 @@ class AuthenticationController < ApplicationController
     end
   end
 
+  def create_user
+    user = User.create!(user_params)
+    if user && user.valid?
+      render json: payload(user)
+    end
+  end
+
   private
 
   def payload(user)
@@ -16,5 +23,9 @@ class AuthenticationController < ApplicationController
       auth_token: JsonWebToken.encode({user_id: user.id}),
       user: {id: user.id, email: user.email}
     }
+  end
+
+  def user_params
+    params.require(:user).permit(:email, :password, :password_confirmation)
   end
 end
