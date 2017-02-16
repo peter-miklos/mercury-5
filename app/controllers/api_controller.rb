@@ -1,4 +1,5 @@
 class ApiController < ApplicationController
+  before_filter :authenticate_request!
   before_filter :find_product, only: [:show, :update, :destroy]
 
   def index

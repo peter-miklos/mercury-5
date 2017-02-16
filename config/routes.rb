@@ -6,6 +6,12 @@ Rails.application.routes.draw do
       scope '/products' do
         get '/' => 'api#index'
       end
+      scope '/users' do
+        post '/new' => 'authentication#create_user'
+      end
+      scope '/session' do
+        post '/new' => 'authentication#authenticate_user'
+      end
       scope '/product' do
         post '/' => 'api#create'
         scope '/:product_id' do
