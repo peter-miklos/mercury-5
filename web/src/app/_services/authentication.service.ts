@@ -20,7 +20,7 @@ export class AuthenticationService {
   login(username: string, password: string): Observable<boolean> {
     let headers = new Headers({'Content-type': 'application/json'});
     return this.http.post('http://localhost:4000/api/v1/session/new',
-                          JSON.stringify({email: username, password: password}),
+                          JSON.stringify({username: username, password: password}),
                           {headers})
                     .map((res: Response) => {
                       let token = res.json() && res.json().token;
