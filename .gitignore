@@ -4,6 +4,51 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/web/dist
+/web/tmp
+/web/out-tsc
+
+# dependencies
+/web/node_modules
+
+# IDEs and editors
+/web/.idea
+/api/.idea
+/.idea
+/web/.project
+/web/.classpath
+/web/.c9/
+*.launch
+/web/.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+/web/.vscode/*
+!/web/.vscode/settings.json
+!/web/.vscode/tasks.json
+!/web/.vscode/launch.json
+!/web/.vscode/extensions.json
+
+# misc
+/web/.sass-cache
+/web/connect.lock
+/web/coverage
+/web/libpeerconnection.log
+/web/npm-debug.log
+/web/testem.log
+/web/typings
+
+# e2e
+/web/e2e/*.js
+/web/e2e/*.map
+
+# System Files
+.DS_Store
+Thumbs.db
+
 # Ignore bundler config.
 /api/.bundle
 
