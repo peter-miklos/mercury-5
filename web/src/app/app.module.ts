@@ -8,10 +8,13 @@ import 'hammerjs';
 
 import { AppComponent } from './app.component';
 import { routing, appRoutingProviders }   from './app-routing.module';
+import { ProductsComponent } from './products/products.component';
+import { AuthGuard }         from './_guards/auth.guard';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ProductsComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +25,8 @@ import { routing, appRoutingProviders }   from './app-routing.module';
     BrowserAnimationsModule
   ],
   providers: [
-    appRoutingProviders
+    appRoutingProviders,
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })
