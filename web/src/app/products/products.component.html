@@ -1,3 +1,23 @@
-<p>
-  products works!
-</p>
+<h2>All products</h2>
+<ul>
+  <table>
+    <tr>
+      <th>Category</th>
+      <th>Group</th>
+      <th>Name</th>
+      <th>Price</th>
+      <th>Origin</th>
+      <th>Delete</th>
+    </tr>
+  </table>
+    <tr *ngFor="let product of products"
+        [class.selected]="product === selectedProduct"
+        (click)="onSelect(product)">
+      <td>{{product.category}}</td>
+      <td>{{product.group}}</td>
+      <td>{{product.name}}</td>
+      <td>{{product.price}}</td>
+      <td>{{product.origin}}</td>
+      <td>Delete</td>
+    </tr>
+</ul>
