@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.authenticationService.logout();
+    // this.authenticationService.logout();
   }
 
   loginOld() {
@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
   }
 
   fbLogout(): void {
-    this.authenticationService.logOutWithFb();
+    this.authenticationService.logoutWithFb();
   }
 
   private handleLoginError(): void {

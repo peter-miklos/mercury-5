@@ -35,15 +35,16 @@ export class AuthenticationService {
     });
   }
 
-  logOutWithFb(): void {
+  logoutWithFb(): void {
     FB.logout((response: any) => {
       console.log("User is logged out");
+      this.logout();
     })
   }
 
   loginOld(username: string, password: string): Observable<boolean> {
     let headers = new Headers({'Content-type': 'application/json'});
-    return this.http.post('http://localhost:4000/api/v1/session/new',
+    return this.http.post('http://localhost:4000/api/v1/session/new2',
                           JSON.stringify({username: username, password: password}),
                           {headers})
                     .map((res: Response) => {
@@ -59,17 +60,36 @@ export class AuthenticationService {
                     .catch(this.handleError);
   }
 
+  private loginOnBackEnd(response: any): Observable<boolean> {
+    let headers = new Headers({'Content-type': 'application/json'});
+    return this.http.post('http://localhost:4000/api/v1/session/new',
+                          JSON.stringify({
+                            fbToken: response.authResponse.accesToken,
+                            expiresIn: response.authResponse.expiresIn,
+                            status: response.status
+                          }), {headers})
+                    .map((res: Response) => {
+                      let token = res.json() && res.json().token;
+                      if(token) {
+                        this.token = token;
+                        localStorage.setItem('currentUser', JSON.stringify({username: res.json().email, token: token}));
+                        return true;
+                      } else {
+                        return false
+                      }
+                    })
+                    .catch(this.handleError);
+  }
 
-  logout(): void {
+  private logout(): void {
     this.token = null;
     localStorage.removeItem('currentUser');
   }
 
-  private statusChangeCallback(resp) {
-    if (resp.status === 'connected') {
+  private statusChangeCallback(response) {
+    if (response.status === 'connected') {
+      this.loginOnBackEnd(response)
         // connect here with your server for facebook login by passing access token given by facebook
-    }else if (resp.status === 'not_authorized'){
-      console.log("Not logged in");
     } else {
       this.fbLogin();
     }
@@ -77,7 +97,9 @@ export class AuthenticationService {
 
   private fbLogin(): void {
     FB.login((response: any) => {
+      this.loginOnBackEnd(response);
       console.log("USER LOGGED IN");
+      console.log(response);
     }, {scope: 'public_profile,email,user_friends'});
   }
 
