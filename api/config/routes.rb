@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       end
       scope '/session' do
         post '/new' => 'authentication#authenticate_user'
+        post '/new2' => 'authentication#authenticate_user2'
       end
       scope '/product' do
         post '/' => 'api#create'
