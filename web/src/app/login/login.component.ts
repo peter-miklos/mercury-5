@@ -4,8 +4,6 @@ import { Router }            from '@angular/router';
 import { AuthenticationService }  from '../_services/authentication.service';
 import { environment }            from '../../environments/environment';
 
-declare const FB: any;
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -20,23 +18,15 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService
-  ) {
-    FB.init({
-      appId      : environment.fbAppId,
-      cookie     : false,  // enable cookies to allow the server to access
-                          // the session
-      xfbml      : true,  // parse social plugins on this page
-      version    : 'v2.9' // use graph api version
-    });
-  }
+  ) { }
 
   ngOnInit() {
     this.authenticationService.logout();
   }
 
-  login() {
+  loginOld() {
     this.loading = true;
-    this.authenticationService.login(this.model.username, this.model.password)
+    this.authenticationService.loginOld(this.model.username, this.model.password)
         .subscribe(
           result => {
             if(result) {
@@ -51,31 +41,11 @@ export class LoginComponent implements OnInit {
   }
 
   fbLogin(): void {
-    FB.getLoginStatus(response => {
-      this.statusChangeCallback(response);
-    });
+    this.authenticationService.loginWithFb();
   }
 
   fbLogout(): void {
-    FB.logout((response: any) => {
-      console.log("User is logged out");
-    })
-  }
-
-  private statusChangeCallback(resp) {
-    if (resp.status === 'connected') {
-        // connect here with your server for facebook login by passing access token given by facebook
-    }else if (resp.status === 'not_authorized'){
-      console.log("Not logged in");
-    } else {
-      this.fbRealLogin();
-    }
-  };
-
-  private fbRealLogin(): void {
-    FB.login((response: any) => {
-      console.log("USER LOGGED IN");
-    }, {scope: 'public_profile,email,user_friends'});
+    this.authenticationService.logOutWithFb();
   }
 
   private handleLoginError(): void {

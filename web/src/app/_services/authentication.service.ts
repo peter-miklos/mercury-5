@@ -5,6 +5,10 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 
+import { environment }            from '../../environments/environment';
+
+declare const FB: any;
+
 @Injectable()
 export class AuthenticationService {
 
@@ -15,9 +19,29 @@ export class AuthenticationService {
   ) {
     let currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
+
+    FB.init({
+      appId      : environment.fbAppId,
+      cookie     : false,  // enable cookies to allow the server to access
+                          // the session
+      xfbml      : true,  // parse social plugins on this page
+      version    : 'v2.9' // use graph api version
+    });
   }
 
-  login(username: string, password: string): Observable<boolean> {
+  loginWithFb(): void {
+    FB.getLoginStatus(response => {
+      this.statusChangeCallback(response);
+    });
+  }
+
+  logOutWithFb(): void {
+    FB.logout((response: any) => {
+      console.log("User is logged out");
+    })
+  }
+
+  loginOld(username: string, password: string): Observable<boolean> {
     let headers = new Headers({'Content-type': 'application/json'});
     return this.http.post('http://localhost:4000/api/v1/session/new',
                           JSON.stringify({username: username, password: password}),
@@ -39,6 +63,22 @@ export class AuthenticationService {
   logout(): void {
     this.token = null;
     localStorage.removeItem('currentUser');
+  }
+
+  private statusChangeCallback(resp) {
+    if (resp.status === 'connected') {
+        // connect here with your server for facebook login by passing access token given by facebook
+    }else if (resp.status === 'not_authorized'){
+      console.log("Not logged in");
+    } else {
+      this.fbLogin();
+    }
+  };
+
+  private fbLogin(): void {
+    FB.login((response: any) => {
+      console.log("USER LOGGED IN");
+    }, {scope: 'public_profile,email,user_friends'});
   }
 
   private handleError(error: Response | any) {
