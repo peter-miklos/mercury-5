@@ -34,7 +34,9 @@ class User
   # field :unlock_token,    type: String # Only if unlock strategy is :email or :both
   # field :locked_at,       type: Time
 
-  validates_presence_of :email, :encrypted_password
+  validates_presence_of :email
   validates_uniqueness_of :email, case_sensitive: false
   validates_format_of :email, with: /@/
+
+  embeds_many :user_providers, class_name: "UserProvider"
 end
