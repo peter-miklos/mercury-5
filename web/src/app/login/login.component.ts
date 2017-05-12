@@ -4,6 +4,8 @@ import { Router }            from '@angular/router';
 import { AuthenticationService }  from '../_services/authentication.service';
 import { environment }            from '../../environments/environment';
 
+declare const FB: any;
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -18,11 +20,17 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService
-  ) { }
-
-  ngOnInit() {
-    // this.authenticationService.logout();
+  ) {
+    FB.init({
+      appId      : environment.fbAppId,
+      cookie     : false,  // enable cookies to allow the server to access
+                          // the session
+      xfbml      : true,  // parse social plugins on this page
+      version    : 'v2.9' // use graph api version
+    });
   }
+
+  ngOnInit() { }
 
   loginOld() {
     this.loading = true;
@@ -41,11 +49,38 @@ export class LoginComponent implements OnInit {
   }
 
   fbLogin(): void {
-    this.authenticationService.loginWithFb();
+    FB.getLoginStatus(response => {
+      this.statusChangeCallback(response);
+    });
   }
 
   fbLogout(): void {
-    this.authenticationService.logoutWithFb();
+    FB.logout((response: any) => {
+      console.log("User is logged out");
+      this.authenticationService.logout();
+    })
+  }
+
+  private statusChangeCallback(response): void {
+    if (response.status === 'connected') {
+      this.loginToBackEndWithFb(response)
+    } else {
+      FB.login((response: any) => {
+        this.loginToBackEndWithFb(response);
+      }, {scope: 'public_profile,email,user_friends'});
+    }
+  };
+
+  private loginToBackEndWithFb(response: any): void {
+    this.loading = true;
+    this.authenticationService.loginOnBackEnd(response)
+        .subscribe(
+          result => {
+            if (result) { this.router.navigate(['/']); }
+            else { this.handleLoginError(); }
+          },
+          error => { this.handleLoginError(); }
+        )
   }
 
   private handleLoginError(): void {
