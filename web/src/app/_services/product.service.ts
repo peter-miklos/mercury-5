@@ -11,7 +11,7 @@ import { Product }                from '../_models/product.model';
 @Injectable()
 export class ProductService {
 
-  private productUrl = "http://localhost:4000/api/v1";
+  private productUrl = "http://localhost:3000/api/v1";
   private headers = new Headers({
     'Authorization': `Bearer ${this.authenticationService.token}`,
     'Content-type': 'application/json'

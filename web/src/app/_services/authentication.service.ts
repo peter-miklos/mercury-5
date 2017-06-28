@@ -5,6 +5,8 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 
+import { environment }            from '../../environments/environment';
+
 @Injectable()
 export class AuthenticationService {
 
@@ -17,9 +19,9 @@ export class AuthenticationService {
     this.token = currentUser && currentUser.token;
   }
 
-  login(username: string, password: string): Observable<boolean> {
+  loginOld(username: string, password: string): Observable<boolean> {
     let headers = new Headers({'Content-type': 'application/json'});
-    return this.http.post('http://localhost:4000/api/v1/session/new',
+    return this.http.post('http://localhost:3000/api/v1/session/new2',
                           JSON.stringify({username: username, password: password}),
                           {headers})
                     .map((res: Response) => {
@@ -35,6 +37,26 @@ export class AuthenticationService {
                     .catch(this.handleError);
   }
 
+  loginOnBackEnd(input: any): Observable<boolean> {
+    let headers = new Headers({'Content-type': 'application/json'});
+    return this.http.post('http://localhost:3000/api/v1/session/new',
+                          JSON.stringify({
+                            fbToken: input.authResponse.accessToken,
+                            expiresIn: input.authResponse.expiresIn,
+                            status: input.status
+                          }), {headers})
+                    .map((res: Response) => {
+                      let token = res.json() && res.json().token;
+                      if(token) {
+                        this.token = token;
+                        localStorage.setItem('currentUser', JSON.stringify({username: res.json().user.email, token: token, expiration: res.json().expiration}));
+                        return true;
+                      } else {
+                        return false
+                      }
+                    })
+                    .catch(this.handleError);
+  }
 
   logout(): void {
     this.token = null;

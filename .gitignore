@@ -60,3 +60,10 @@ Thumbs.db
 
 # Ignore Byebug command history file.
 /api/.byebug_history
+
+# Ignore .env, secret files files
+.env
+/api/.env
+/web/.env
+/web/src/environments/app-secret.ts
+/web/src/environments/app-secret.prod.ts
