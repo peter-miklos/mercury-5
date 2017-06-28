@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DoCheck } from '@angular/core';
 import { Router }            from '@angular/router';
 
 import { AuthenticationService }  from '../_services/authentication.service';
@@ -11,11 +11,12 @@ declare const FB: any;
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, DoCheck {
 
   private model: any = {};
   private loading: boolean = false;
-  private error: string = '';
+  private errorMsg: string = '';
+  private userLoggedIn: boolean;
 
   constructor(
     private router: Router,
@@ -23,16 +24,22 @@ export class LoginComponent implements OnInit {
   ) {
     FB.init({
       appId      : environment.fbAppId,
-      cookie     : false,  // enable cookies to allow the server to access
+      cookie     : true,  // enable cookies to allow the server to access
                           // the session
       xfbml      : true,  // parse social plugins on this page
       version    : 'v2.9' // use graph api version
     });
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.updateLoggedInUser();
+  }
 
-  loginOld() {
+  ngDoCheck() {
+    this.updateLoggedInUser();
+  }
+
+  public loginOld(): void {
     this.loading = true;
     this.authenticationService.loginOld(this.model.username, this.model.password)
         .subscribe(
@@ -48,16 +55,21 @@ export class LoginComponent implements OnInit {
           })
   }
 
-  fbLogin(): void {
+  public fbLogin(): void {
     FB.getLoginStatus(response => {
       this.statusChangeCallback(response);
     });
   }
 
-  fbLogout(): void {
-    FB.logout((response: any) => {
-      console.log("User is logged out");
-      this.authenticationService.logout();
+  public fbLogout(): void {
+    FB.getLoginStatus(response => {
+      console.log(response);
+      if (response.status === 'connected') {
+        FB.logout((res: any) => {
+          console.log("User is logged out");
+          this.authenticationService.logout();
+        })
+      }
     })
   }
 
@@ -77,15 +89,19 @@ export class LoginComponent implements OnInit {
         .subscribe(
           result => {
             if (result) { this.router.navigate(['/']); }
-            else { this.handleLoginError(); }
+            else { this.handleLoginError();}
           },
           error => { this.handleLoginError(); }
         )
   }
 
   private handleLoginError(): void {
-    this.error = 'Username or password is incorrect!';
+    this.errorMsg = 'Username or password is incorrect!';
     this.loading = false;
+  }
+
+  private updateLoggedInUser(): void {
+    this.userLoggedIn = !!localStorage.getItem('currentUser');
   }
 
 }

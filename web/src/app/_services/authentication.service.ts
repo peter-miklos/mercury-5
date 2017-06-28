@@ -39,10 +39,6 @@ export class AuthenticationService {
 
   loginOnBackEnd(input: any): Observable<boolean> {
     let headers = new Headers({'Content-type': 'application/json'});
-    console.log("STEP 1");
-    console.log(input.authResponse.accessToken);
-    console.log(input.authResponse.expiresIn);
-    console.log(input.status);
     return this.http.post('http://localhost:3000/api/v1/session/new',
                           JSON.stringify({
                             fbToken: input.authResponse.accessToken,
@@ -50,11 +46,10 @@ export class AuthenticationService {
                             status: input.status
                           }), {headers})
                     .map((res: Response) => {
-                      console.log("STEP 2");
                       let token = res.json() && res.json().token;
                       if(token) {
                         this.token = token;
-                        localStorage.setItem('currentUser', JSON.stringify({username: res.json().email, token: token}));
+                        localStorage.setItem('currentUser', JSON.stringify({username: res.json().user.email, token: token, expiration: res.json().expiration}));
                         return true;
                       } else {
                         return false
